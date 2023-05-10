@@ -12,14 +12,14 @@ const app = express();
 
 // middleware
 const middleware = [
-  morgan("dev"),
-  cors({ origin: frontend_origin, credentials: true }),
-  express.json({ limit: "3mb" }),
-  express.urlencoded({ limit: "3mb", extended: false }),
+   morgan("dev"),
+   cors({ origin: frontend_origin, credentials: true }),
+   express.json({ limit: "3mb" }),
+   express.urlencoded({ limit: "3mb", extended: false }),
 ];
 app.use(middleware);
 
 // listen
 app.listen(port, async () => {
-  console.log(`Server is listening on: ${backend_origin}`);
+   console.log(`Server is listening on: ${backend_origin}`);
 });
