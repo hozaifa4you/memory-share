@@ -1,7 +1,10 @@
+"use client";
+import { Text } from "@mantine/core";
+
 export default function Home() {
   return (
     <main>
-      <h2>Hello World</h2>
+      <Text color="orange">Hello World</Text>
     </main>
   );
 }
