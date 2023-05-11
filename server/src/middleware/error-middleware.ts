@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 
 import { HttpException } from "@/utils/HttpException";
 import { ErrorType, NODE_ENV } from "@/utils/options";
+import { ZodError } from "zod";
 
 dotenv.config();
 
@@ -24,8 +25,16 @@ export const errorHandler = (
   let message: string = err.message || "🔥 internal server error ❌";
   let errors: object[] = [];
 
-  // FIXME: remove in the future
-  console.error("❌ error showing: ", err);
+  // TODO: zod error
+  if (err instanceof ZodError) {
+    const zodErrors = err.errors.map((error) => {
+      return { path: error.path[0], message: error.message };
+    });
+    console.error("🚀🚀❌❌ error showing: ", zodErrors);
+    status = 400;
+    message = "ValidationError";
+    errors = zodErrors;
+  }
 
   // TODO: no directory error
   if (err.code?.toString() === ErrorType.NoDirError) {
@@ -33,10 +42,15 @@ export const errorHandler = (
     status = 404;
   }
 
+  // TODO: duplicate error
+  // console.error("🚀🚀❌❌ error showing: ", err);
+
   return res.status(status).json({
     success: false,
     stack:
-      process.env.NOTE_ENV === NODE_ENV.DEV ? err.stack : "⚠️ not permitted ❌",
+      String(process.env.NODE_ENV) === String(NODE_ENV.DEV)
+        ? err.stack
+        : "⚠️ not permitted ❌",
     message,
     errors: errors.length > 0 ? errors : null,
   });
