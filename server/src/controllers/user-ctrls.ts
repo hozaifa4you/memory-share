@@ -19,7 +19,7 @@ class UserControllers {
   async createNewUser(req: Request, res: Response) {
     const body = req.body;
 
-    const { email, name, password, phone, username } = await z
+    const { email, name, password, username } = await z
       .object({
         name: z.string({ required_error: "❌ Name is required ⚠️" }).trim(),
         username: z
@@ -31,14 +31,14 @@ class UserControllers {
           .email({ message: "❌ Invalid Email Address ⚠️" })
           .toLowerCase()
           .trim(),
-        phone: z.string().trim().optional(),
+
         password: z.string({ required_error: "❌ Password is required ⚠️" }),
       })
       .parse(body);
 
     const existingUser = await prisma.user.findFirst({
       where: {
-        OR: [{ username, email, phone }],
+        OR: [{ username }, { email }],
       },
     });
 
@@ -50,7 +50,7 @@ class UserControllers {
     const hashPass = await bcrypt.hash(password, 12);
 
     const user = await prisma.user.create({
-      data: { name, username, email, password: hashPass, phone },
+      data: { name, username, email, password: hashPass },
     });
 
     res.status(201).json(lodash.omit(user, "password"));

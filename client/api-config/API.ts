@@ -9,7 +9,8 @@ export const API: AxiosInstance = axios.create({
 });
 
 // TODO: login user types
-export interface LoginUserTypes {
+
+export interface RegisterUserTypes {
   id: string;
   name: string;
   username: string;
@@ -18,5 +19,8 @@ export interface LoginUserTypes {
   avatar?: string;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface LoginUserTypes extends RegisterUserTypes {
   token: string;
 }

@@ -45,8 +45,6 @@ export const authSlice = createSlice({
   reducers: {
     // TODO: login
     setLogin(state, action: PayloadAction<LoginUserTypes>) {
-      console.log("🚀🚀🚀 payload", action.payload);
-
       state.isAuth = true;
       state.token = action.payload.token;
       state.user = action.payload;
@@ -82,15 +80,12 @@ export const login = (data: LoginDataTypes) => async (dispatch: Dispatch) => {
     if (typeof window !== "undefined") {
       localStorage.setItem(login_info, JSON.stringify(responseData));
     }
-    dispatch(setStatus(STATUS.IDLE));
     notifications.show({
       title: "🚀 Authentication Alert 🔥",
       message: "Login succeed!",
       color: "green",
     });
-    console.log(responseData); // FIXME: remove in future
   } catch (error: any) {
-    dispatch(setStatus(STATUS.ERROR));
     let err_message;
     if (error instanceof AxiosError) {
       err_message = error.response?.data.message;
@@ -103,6 +98,8 @@ export const login = (data: LoginDataTypes) => async (dispatch: Dispatch) => {
       color: "yellow",
     });
     dispatch(setError(err_message));
+  } finally {
+    dispatch(setStatus(STATUS.IDLE));
   }
 };
 
@@ -117,6 +114,8 @@ export const logout = () => (dispatch: Dispatch) => {
     color: "yellow",
   });
 };
+
+// TODO: register
 
 // TODO:
 export const selectLogin = (state: RootState) => state.authentication;

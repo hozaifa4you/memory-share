@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useEffect } from "react";
 import { useToggle, upperFirst } from "@mantine/hooks";
@@ -17,18 +18,20 @@ import {
 } from "@mantine/core";
 import { useSearchParams, useRouter, redirect } from "next/navigation";
 import lodash from "lodash";
+import { notifications } from "@mantine/notifications";
 
 import { GoogleButton, FacebookButton } from "@/components";
 import { useAppDispatch } from "@/redux/hooks/hooks";
 import { login } from "@/redux/slices/authSlices";
 import { useAppSelector } from "@/redux/hooks/hooks";
-import { selectLogin } from "@/redux/slices/authSlices";
+import { selectLogin, setStatus } from "@/redux/slices/authSlices";
 import { STATUS } from "@/redux/status";
-import { notifications } from "@mantine/notifications";
+import { API, type RegisterUserTypes } from "@/api-config/API";
+import { AxiosError } from "axios";
 
 const Login = () => {
   const [type, toggle] = useToggle(["login", "register"]);
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams()!;
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { isAuth, token, error, status, user } = useAppSelector(selectLogin);
@@ -39,7 +42,6 @@ const Login = () => {
       name: "",
       password: "",
       username: "",
-      phone: "",
       terms: true,
     },
 
@@ -52,17 +54,40 @@ const Login = () => {
     },
   });
 
-  const handleSubmit = (data: typeof form.values) => {
+  const handleSubmit = async (data: typeof form.values) => {
     if (type === "login") {
       // TODO: login
-      console.log("🚀🚀🚀 login"); //FIXME: remove in future
-      dispatch(
-        login(lodash.omit(data, ["name", "phone", "terms", "username"]))
-      );
+      await dispatch(login(lodash.omit(data, ["name", "terms", "username"])));
       router.refresh();
-    } else {
+    } else if (type === "register") {
       // TODO: register
-      console.log("🚀🚀🚀 register"); //FIXME: remove in future
+      dispatch(setStatus(STATUS.LOADING));
+      try {
+        const { data: registerData } = await API.post<RegisterUserTypes>(
+          "/api/v1/users/create",
+          data
+        );
+        notifications.show({
+          title: "New Registration Alert",
+          message: "🚀 Congratulation! New user created 🔥",
+          color: "green",
+        });
+        router.replace("/auth?type=login");
+      } catch (error: any) {
+        let err_message;
+        if (error instanceof AxiosError) {
+          err_message = error.response?.data.message;
+        } else {
+          err_message = error.message;
+        }
+        return notifications.show({
+          title: "New Registration Alert",
+          message: err_message,
+          color: "yellow",
+        });
+      } finally {
+        dispatch(setStatus(STATUS.IDLE));
+      }
     }
   };
 
@@ -127,18 +152,6 @@ const Login = () => {
                 radius="md"
                 required={type === "register"}
                 autoComplete="username"
-              />
-            )}
-            {type === "register" && (
-              <TextInput
-                label="Phone Number"
-                placeholder="Your phone number"
-                value={form.values.phone}
-                onChange={(event) =>
-                  form.setFieldValue("phone", event.currentTarget.value)
-                }
-                radius="md"
-                autoComplete="phone"
               />
             )}
 
