@@ -93,7 +93,14 @@ class UserControllers {
     }
 
     const token = jwt.sign(
-      lodash.omit(user, ["password", "address", "memories", "Comment"]),
+      lodash.omit(user, [
+        "password",
+        "address",
+        "memories",
+        "Comment",
+        "addressId",
+        "address",
+      ]),
       jwt_secret,
       { expiresIn: jwt_expire_in }
     );

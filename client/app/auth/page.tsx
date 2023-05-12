@@ -31,7 +31,7 @@ import { AxiosError } from "axios";
 
 const Login = () => {
   const [type, toggle] = useToggle(["login", "register"]);
-  const searchParams = useSearchParams()!;
+  const searchParams = useSearchParams();
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { isAuth, token, error, status, user } = useAppSelector(selectLogin);
@@ -63,10 +63,7 @@ const Login = () => {
       // TODO: register
       dispatch(setStatus(STATUS.LOADING));
       try {
-        const { data: registerData } = await API.post<RegisterUserTypes>(
-          "/api/v1/users/create",
-          data
-        );
+        await API.post<RegisterUserTypes>("/api/v1/users/create", data);
         notifications.show({
           title: "New Registration Alert",
           message: "🚀 Congratulation! New user created 🔥",
