@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 
-const api_url = process.env.BACKEND_URL as string;
+const api_url = process.env.NEXT_PUBLIC_BACKEND_ORIGIN as string;
 
 // TODO: api instance
 export const API: AxiosInstance = axios.create({
@@ -15,6 +15,7 @@ export interface LoginUserTypes {
   username: string;
   email: string;
   phone?: string;
+  avatar?: string;
   createdAt: Date;
   updatedAt: Date;
   token: string;

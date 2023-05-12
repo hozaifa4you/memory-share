@@ -59,16 +59,19 @@ class UserControllers {
   // TODO: login user
   async login(req: Request, res: Response) {
     const body = req.body;
+
     const { password, email, phone, username } = z
       .object({
         username: z.string().trim().optional(),
         email: z
           .string()
           .email({ message: "❌ Invalid Email Address ⚠️" })
-          .trim()
-          .optional(),
+          .trim(),
         phone: z.string().trim().optional(),
-        password: z.string({ required_error: "❌ Password is required ⚠️" }),
+        password: z
+          .string({ required_error: "❌ Password is required ⚠️" })
+          .min(7, "❌ Password is too short ⚠️")
+          .max(32, "❌ Password is too long ⚠️"),
       })
       .parse(body);
 

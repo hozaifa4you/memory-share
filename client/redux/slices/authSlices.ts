@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { createSlice, PayloadAction, Dispatch } from "@reduxjs/toolkit";
+import { notifications } from "@mantine/notifications";
 
 import { RootState } from "@/redux/store";
 import { STATUS } from "@/redux/status";
@@ -10,12 +11,12 @@ import { AxiosError } from "axios";
 export interface InitialStateType {
   isAuth?: boolean;
   token?: string | null;
-  user?: object | null;
+  user?: LoginUserTypes | null;
   status?: STATUS;
-  error?: null | object;
+  error?: null | string;
 }
 export interface LoginDataTypes {
-  username: string;
+  email: string;
   password: string;
 }
 
@@ -28,7 +29,7 @@ const initialState: InitialStateType = {
       : false,
   user:
     typeof window !== "undefined" && localStorage.getItem(login_info)
-      ? JSON.parse(localStorage.getItem(login_info)!).user
+      ? JSON.parse(localStorage.getItem(login_info)!)
       : null,
   token:
     typeof window !== "undefined" && localStorage.getItem(login_info)
@@ -43,16 +44,19 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     // TODO: login
-    setLogin(state, action: PayloadAction<InitialStateType>) {
+    setLogin(state, action: PayloadAction<LoginUserTypes>) {
+      console.log("🚀🚀🚀 payload", action.payload);
+
       state.isAuth = true;
       state.token = action.payload.token;
-      state.user = action.payload.user;
+      state.user = action.payload;
     },
     // TODO: logout
     setLogout(state) {
       state.isAuth = false;
       state.token = null;
       state.user = null;
+      typeof window !== "undefined" && localStorage.removeItem(login_info);
     },
     // TODO: status
     setStatus(state, action) {
@@ -70,22 +74,48 @@ export const login = (data: LoginDataTypes) => async (dispatch: Dispatch) => {
   dispatch(setStatus(STATUS.LOADING));
 
   try {
-    const { data } = await API.post<LoginUserTypes>("/api/v1/users/login");
-    dispatch(setLogin(data));
+    const { data: responseData } = await API.post<LoginUserTypes>(
+      "/api/v1/users/login",
+      data
+    );
+    dispatch(setLogin(responseData));
     if (typeof window !== "undefined") {
-      localStorage.setItem(login_info, JSON.stringify(data));
+      localStorage.setItem(login_info, JSON.stringify(responseData));
     }
     dispatch(setStatus(STATUS.IDLE));
-    console.log(data); // FIXME: remove in future
+    notifications.show({
+      title: "🚀 Authentication Alert 🔥",
+      message: "Login succeed!",
+      color: "green",
+    });
+    console.log(responseData); // FIXME: remove in future
   } catch (error: any) {
     dispatch(setStatus(STATUS.ERROR));
     let err_message;
     if (error instanceof AxiosError) {
       err_message = error.response?.data.message;
+    } else {
+      err_message = error.message;
     }
-    err_message = error.message;
+    notifications.show({
+      title: "🚀 Authentication Alert 🔥",
+      message: err_message,
+      color: "yellow",
+    });
     dispatch(setError(err_message));
   }
+};
+
+// TODO: logout
+export const logout = () => (dispatch: Dispatch) => {
+  dispatch(setStatus(STATUS.LOADING));
+  dispatch(setLogout());
+  dispatch(setStatus(STATUS.IDLE));
+  notifications.show({
+    title: "🚀 Authentication Alert 🔥",
+    message: "Logout succeed!",
+    color: "yellow",
+  });
 };
 
 // TODO:
