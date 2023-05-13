@@ -32,7 +32,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import { Logo, AuthMenu } from "@/components";
+import { Logo, AuthMenu } from "@/app/components";
 import { useAppSelector } from "@/redux/hooks";
 import { selectLogin } from "@/redux/slices/authSlices";
 

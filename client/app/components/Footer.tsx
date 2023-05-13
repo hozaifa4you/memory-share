@@ -13,7 +13,7 @@ import {
   IconBrandInstagram,
 } from "@tabler/icons-react";
 
-import { Logo } from "@/components";
+import { Logo } from "@/app/components";
 
 const useStyles = createStyles((theme) => ({
   footer: {

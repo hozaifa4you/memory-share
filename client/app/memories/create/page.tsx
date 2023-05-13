@@ -13,10 +13,12 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
-import { FileUpload } from "@/components";
+import { FileUpload } from "@/app/components";
+import { useAppSelector } from "@/redux/hooks";
 
 const MemoryCreate = () => {
-  // const [type, toggle] = useToggle(["login", "register"]);
+  const { user } = useAppSelector((state) => state.authentication);
+
   const form = useForm({
     initialValues: {
       title: "",
@@ -163,7 +165,7 @@ const MemoryCreate = () => {
             />
 
             {/* TODO: file upload */}
-            <FileUpload />
+            {user && <FileUpload user={user} />}
           </Stack>
 
           <Group position="apart" mt="xl">

@@ -1,5 +1,5 @@
 "use client";
-import { Footer, Navbar } from "@/components";
+import { Footer, Navbar } from "@/app/components";
 import "./globals.css";
 import { Inter } from "next/font/google";
 

@@ -1,4 +1,3 @@
-import Providers from "@/components/Providers";
 import Navbar from "./Navbar";
 import Logo from "./Logo";
 import AuthMenu from "./Navbar/AuthMenu";
@@ -14,10 +13,9 @@ import {
   GoogleButton,
   SocialButtons,
   TwitterButton,
-} from "@/components/button/SocialButtons";
+} from "@/app/components/button/SocialButtons";
 
 export {
-  Providers,
   Navbar,
   FacebookIcon,
   GoogleIcon,

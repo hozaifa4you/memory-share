@@ -8,17 +8,19 @@ import { AxiosError } from "axios";
 import { notifications } from "@mantine/notifications";
 
 import { API, MemoryMediaUploadType } from "@/api-config/API";
-import { selectLogin } from "@/redux/slices/authSlices";
-import { useAppSelector } from "@/redux/hooks";
-import { ReduxProvider } from "@/redux/ReduxProvider";
+import { LoginUserTypes } from "@/api-config/API";
 
-export default function FileUpload() {
+interface PropTypes {
+  user: LoginUserTypes;
+}
+
+export default function FileUpload({ user }: PropTypes) {
   const theme = useMantineTheme();
   const [loading, setLoading] = useState(false);
-  const { user } = useAppSelector(selectLogin);
+
+  console.log("🚀🚀🚀 create page user: ", user);
 
   const fileUploader = async (files: FileWithPath[]) => {
-    console.log("🚀🚀🚀 files", files);
     setLoading(true);
     try {
       const formData = new FormData();
