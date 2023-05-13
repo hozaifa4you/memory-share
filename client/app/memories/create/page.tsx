@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import {
   Container,
   Paper,
@@ -10,14 +10,17 @@ import {
   Button,
   Textarea,
   Grid,
+  Image,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
-import { FileUpload } from "@/app/components";
+import { FileUpload, UploadedImage } from "@/app/components";
 import { useAppSelector } from "@/redux/hooks";
+import type { MemoryMediaUploadType } from "@/api-config/API";
 
 const MemoryCreate = () => {
   const { user } = useAppSelector((state) => state.authentication);
+  const [images, setImages] = useState<MemoryMediaUploadType[]>([]);
 
   const form = useForm({
     initialValues: {
@@ -39,6 +42,10 @@ const MemoryCreate = () => {
     //       : null,
     // },
   });
+
+  const deletePhoto = (photoId: string) => {
+    console.log("🔥🔥🔥 delete photo id", photoId);
+  };
 
   return (
     <Container size="sm" mt={50}>
@@ -165,7 +172,45 @@ const MemoryCreate = () => {
             />
 
             {/* TODO: file upload */}
-            {user && <FileUpload user={user} />}
+            {user && (
+              <>
+                <Text size="md" weight={500} mb={-10}>
+                  Upload your memory photos: max 5 images
+                </Text>
+                <FileUpload
+                  user={user}
+                  setImages={setImages}
+                  imagesLength={images.length}
+                />
+              </>
+            )}
+            {/* TODO: uploaded images */}
+            {images.length > 0 ? (
+              <>
+                <Text size="md" weight={500} mb={-5}>
+                  Uploaded images
+                </Text>
+                <UploadedImage images={images} deletePhoto={deletePhoto} />
+              </>
+            ) : (
+              <>
+                <Text size="md" weight={500} mb={-10}>
+                  Uploaded images will be shown there.
+                </Text>
+                <Group position="left" align="center">
+                  {[1, 2, 3, 4, 5].map((index: number) => (
+                    <Image
+                      key={index}
+                      width={130}
+                      height={75}
+                      src={null}
+                      alt="With default placeholder"
+                      withPlaceholder
+                    />
+                  ))}
+                </Group>
+              </>
+            )}
           </Stack>
 
           <Group position="apart" mt="xl">

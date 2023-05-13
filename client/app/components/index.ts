@@ -2,8 +2,10 @@ import Navbar from "./Navbar";
 import Logo from "./Logo";
 import AuthMenu from "./Navbar/AuthMenu";
 import Footer from "./Footer";
-import FileUpload from "./FileUpload";
 import Providers from "./Providers";
+
+import FileUpload from "./CreateMemory/FileUpload";
+import UploadedImage from "./CreateMemory/UploadedImage";
 
 import { FacebookIcon } from "./button/btton-icons";
 import { GoogleIcon } from "./button/btton-icons";
@@ -31,4 +33,5 @@ export {
   Footer,
   FileUpload,
   Providers,
+  UploadedImage,
 };

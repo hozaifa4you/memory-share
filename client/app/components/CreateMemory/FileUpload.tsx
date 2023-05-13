@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { useState } from "react";
+import { useState, Dispatch, SetStateAction } from "react";
 import { Group, Text, useMantineTheme, rem } from "@mantine/core";
 import { IconUpload, IconPhoto, IconX } from "@tabler/icons-react";
 import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
@@ -12,13 +12,17 @@ import { LoginUserTypes } from "@/api-config/API";
 
 interface PropTypes {
   user: LoginUserTypes;
+  setImages: Dispatch<SetStateAction<MemoryMediaUploadType[]>>;
+  imagesLength: number;
 }
 
-export default function FileUpload({ user }: PropTypes) {
+export default function FileUpload({
+  user,
+  setImages,
+  imagesLength,
+}: PropTypes) {
   const theme = useMantineTheme();
   const [loading, setLoading] = useState(false);
-
-  console.log("🚀🚀🚀 create page user: ", user);
 
   const fileUploader = async (files: FileWithPath[]) => {
     setLoading(true);
@@ -39,7 +43,12 @@ export default function FileUpload({ user }: PropTypes) {
         }
       );
 
-      console.log("🔥🔥🔥 return uploaded data", data);
+      setImages(data);
+      notifications.show({
+        title: "🚀 Memory Creation Information 🎉",
+        message: `${data.length} images uploaded`,
+        color: "indigo",
+      });
     } catch (error: any) {
       let err_message;
       if (error instanceof AxiosError) {
@@ -60,12 +69,19 @@ export default function FileUpload({ user }: PropTypes) {
   return (
     <Dropzone
       onDrop={fileUploader}
-      onReject={(files) => console.log("❌❌❌ rejected files ", files)}
+      onReject={(files) =>
+        notifications.show({
+          title: "⚠️ Memory creation Information🔥",
+          message: `Only five images can be uploaded but got ${files.length}`,
+          color: "yellow",
+        })
+      }
       maxSize={3 * 1024 ** 2}
       maxFiles={5}
       accept={IMAGE_MIME_TYPE}
       loading={loading}
       name="memory"
+      disabled={imagesLength >= 5}
     >
       <Group
         position="center"

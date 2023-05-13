@@ -1,0 +1,17 @@
+{
+  "name": "memory-share-application",
+  "version": "1.0.0",
+  "description": "```sh\r # initial prisma\r npx prisma init\r # prisma push database\r npx prisma db push\r # generate prisma cline\r npx prisma generate\r ```",
+  "main": "index.js",
+  "scripts": {
+    "start:server": "npm run dev --prefix server",
+    "start:client": "npm run dev --prefix client",
+    "start:dev": "concurrently \"yarn start:server\" \"yarn start:client\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^8.0.1"
+  }
+}
