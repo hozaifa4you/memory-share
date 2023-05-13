@@ -43,7 +43,7 @@ export default function FileUpload({
         }
       );
 
-      setImages(data);
+      setImages((prev) => [...prev, ...data]);
       notifications.show({
         title: "🚀 Memory Creation Information 🎉",
         message: `${data.length} images uploaded`,

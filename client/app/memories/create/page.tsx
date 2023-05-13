@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Container,
   Paper,
@@ -11,9 +11,11 @@ import {
   Button,
   Textarea,
   Grid,
-  Image,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { notifications } from "@mantine/notifications";
+import { AxiosError } from "axios";
+import { useRouter } from "next/navigation";
 
 import { FileUpload, UploadedImage } from "@/app/components";
 import { useAppSelector } from "@/redux/hooks";
@@ -22,13 +24,14 @@ import {
   API,
   DeletePhotoReturnType,
 } from "@/api-config/API";
-import { AxiosError } from "axios";
-import { notifications } from "@mantine/notifications";
 
 const MemoryCreate = () => {
-  const { user } = useAppSelector((state) => state.authentication);
+  const { user, token, isAuth } = useAppSelector(
+    (state) => state.authentication
+  );
   const [images, setImages] = useState<MemoryMediaUploadType[]>([]);
   const [isLoading, setIsLoading] = useState({ isLoading: false, id: "" });
+  const route = useRouter();
 
   const form = useForm({
     initialValues: {
@@ -42,13 +45,18 @@ const MemoryCreate = () => {
       zip: "",
     },
 
-    // validate: {
-    //   email: (val) => (/^\S+@\S+$/.test(val) ? null : "Invalid email"),
-    //   password: (val) =>
-    //     val.length <= 6
-    //       ? "Password should include at least 6 characters"
-    //       : null,
-    // },
+    validate: {
+      title: (val) =>
+        val.length > 120
+          ? "Title is too long, must not greater than 120 characters. got " +
+            val.length +
+            "characters"
+          : null,
+      body: (val) =>
+        val.length < 120
+          ? "Description is too short, please add some text at least 120 characters."
+          : null,
+    },
   });
 
   const deletePhoto = async (photoName: string) => {
@@ -84,6 +92,12 @@ const MemoryCreate = () => {
     }
   };
 
+  useEffect(() => {
+    if (!user || !token || !isAuth) {
+      route.replace("/");
+    }
+  }, [isAuth, route, token, user]);
+
   return (
     <Container size="sm" mt={50}>
       <Paper radius="md" p="xl" withBorder>
@@ -106,6 +120,7 @@ const MemoryCreate = () => {
               }
               radius="md"
               required
+              error={form.errors.title}
             />
 
             <TextInput
@@ -126,7 +141,6 @@ const MemoryCreate = () => {
             <Grid>
               <Grid.Col xs={8}>
                 <TextInput
-                  required
                   description="Street"
                   placeholder="Ex: Holding #65, Wall Street"
                   value={form.values.street}
@@ -139,7 +153,6 @@ const MemoryCreate = () => {
               </Grid.Col>
               <Grid.Col xs={4}>
                 <TextInput
-                  required
                   description="Zip Code"
                   placeholder="Ex: 4560"
                   value={form.values.zip}
@@ -152,7 +165,6 @@ const MemoryCreate = () => {
               </Grid.Col>
               <Grid.Col xs={4}>
                 <TextInput
-                  required
                   description="City"
                   placeholder="Ex: Dhaka"
                   value={form.values.city}
@@ -165,7 +177,6 @@ const MemoryCreate = () => {
               </Grid.Col>
               <Grid.Col xs={4}>
                 <TextInput
-                  required
                   description="State"
                   placeholder="Ex: Khulna"
                   value={form.values.state}
@@ -178,7 +189,6 @@ const MemoryCreate = () => {
               </Grid.Col>
               <Grid.Col xs={4}>
                 <TextInput
-                  required
                   description="Country"
                   placeholder="Ex: Bangladesh"
                   value={form.values.country}
@@ -194,10 +204,7 @@ const MemoryCreate = () => {
             <Textarea
               placeholder="Write some description about your memory."
               label="Description"
-              error={
-                form.errors.body &&
-                "Description should include at least 200 characters."
-              }
+              error={form.errors.body}
               radius="md"
               withAsterisk
               required
@@ -222,7 +229,7 @@ const MemoryCreate = () => {
               </>
             )}
             {/* TODO: uploaded images */}
-            {images.length > 0 ? (
+            {images.length > 0 && (
               <>
                 <Text size="md" weight={500} mb={-5}>
                   Uploaded images
@@ -232,24 +239,6 @@ const MemoryCreate = () => {
                   deletePhoto={deletePhoto}
                   isLoading={isLoading}
                 />
-              </>
-            ) : (
-              <>
-                <Text size="md" weight={500} mb={-10}>
-                  Uploaded images will be shown there.
-                </Text>
-                <Group position="left" align="center">
-                  {[1, 2, 3, 4, 5].map((index: number) => (
-                    <Image
-                      key={index}
-                      width={130}
-                      height={75}
-                      src={null}
-                      alt="With default placeholder"
-                      withPlaceholder
-                    />
-                  ))}
-                </Group>
               </>
             )}
           </Stack>

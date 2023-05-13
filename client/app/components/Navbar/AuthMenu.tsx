@@ -12,14 +12,16 @@ import {
 import {
   IconLogout,
   IconMessage,
-  IconPlayerPause,
   IconSettings,
   IconStar,
-  IconSwitchHorizontal,
   IconTrash,
   IconChevronDown,
   IconHeart,
+  IconPassword,
+  IconBrand4chan,
+  IconBrandBlogger,
 } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
 
 import { useAppSelector, useAppDispatch } from "@/redux/hooks";
 import { selectLogin, logout } from "@/redux/slices/authSlices";
@@ -52,6 +54,7 @@ const AuthMenu = () => {
   const [userMenuOpened, setUserMenuOpened] = useState(false);
   const { user } = useAppSelector(selectLogin);
   const dispatch = useAppDispatch();
+  const router = useRouter();
 
   return (
     <Menu
@@ -110,29 +113,52 @@ const AuthMenu = () => {
         >
           Your comments
         </Menu.Item>
+        <Menu.Item
+          icon={
+            <IconBrand4chan
+              size="0.9rem"
+              color={theme.colors.pink[6]}
+              stroke={1.5}
+            />
+          }
+          onClick={() => router.push("/memories/create")}
+        >
+          Create Memory
+        </Menu.Item>
+        <Menu.Item
+          icon={
+            <IconBrandBlogger
+              size="0.9rem"
+              color={theme.colors.indigo[6]}
+              stroke={1.5}
+            />
+          }
+          onClick={() => ""}
+        >
+          My Memories
+        </Menu.Item>
 
         <Menu.Label>Settings</Menu.Label>
         <Menu.Item icon={<IconSettings size="0.9rem" stroke={1.5} />}>
           Account settings
         </Menu.Item>
-        <Menu.Item icon={<IconSwitchHorizontal size="0.9rem" stroke={1.5} />}>
-          Change account
-        </Menu.Item>
-        <Menu.Item
-          icon={<IconLogout size="0.9rem" stroke={1.5} />}
-          onClick={() => dispatch(logout())}
-        >
-          Logout
+        <Menu.Item icon={<IconPassword size="0.9rem" stroke={1.5} />}>
+          Change Password
         </Menu.Item>
 
         <Menu.Divider />
 
         <Menu.Label>Danger zone</Menu.Label>
-        <Menu.Item icon={<IconPlayerPause size="0.9rem" stroke={1.5} />}>
-          Pause subscription
-        </Menu.Item>
+
         <Menu.Item color="red" icon={<IconTrash size="0.9rem" stroke={1.5} />}>
           Delete account
+        </Menu.Item>
+        <Menu.Item
+          icon={<IconLogout size="0.9rem" stroke={1.5} />}
+          onClick={() => dispatch(logout())}
+          color="orange"
+        >
+          Logout
         </Menu.Item>
       </Menu.Dropdown>
     </Menu>

@@ -208,7 +208,11 @@ const Login = () => {
                 ? "Already have an account? Login"
                 : "Don't have an account? Register"}
             </Anchor>
-            <Button type="submit" radius="xl">
+            <Button
+              type="submit"
+              radius="xl"
+              loading={status === STATUS.LOADING}
+            >
               {upperFirst(type)}
             </Button>
           </Group>
