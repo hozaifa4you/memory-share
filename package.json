@@ -62,6 +62,6 @@
     "typescript": "^5.0.4"
   },
   "_moduleAliases": {
-    "@": "./src"
+    "@": "."
   }
 }
