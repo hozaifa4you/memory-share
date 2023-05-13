@@ -1,6 +1,7 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
+import fs from "fs";
 
 const prisma = new PrismaClient();
 
@@ -43,6 +44,29 @@ class MemoriesControllers {
     });
 
     res.status(201).json(memory);
+  }
+
+  // TODO: delete photo
+  async deleteMemoryPhoto(req: Request, res: Response, next: NextFunction) {
+    const photoName = req.params.photoName;
+
+    if (!photoName) {
+      res.status(404);
+      throw new Error("⚠️ Photo name not found! 🔥");
+    }
+
+    fs.stat(`./public/memory/${photoName}`, function (err, state) {
+      if (err) return next(err);
+      else {
+        console.log("🐼🐼🐼 delete photo state: ", state);
+        fs.unlink(`./public/memory/${photoName}`, function (err) {
+          if (err) return next(err);
+          else {
+            res.status(200).json({ success: true, photoName });
+          }
+        });
+      }
+    });
   }
 }
 

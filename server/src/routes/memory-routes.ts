@@ -24,4 +24,11 @@ memoryRoutes.route("/upload").post(
     res.status(200).json(files);
   })
 );
+
+memoryRoutes
+  .route("/delete-photo")
+  .post(
+    asyncHandler(authentication),
+    asyncHandler(memoryCtrls.deleteMemoryPhoto)
+  );
 export default memoryRoutes;
