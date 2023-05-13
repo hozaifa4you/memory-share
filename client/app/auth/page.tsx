@@ -20,7 +20,7 @@ import { useSearchParams, useRouter, redirect } from "next/navigation";
 import lodash from "lodash";
 import { notifications } from "@mantine/notifications";
 
-import { GoogleButton, FacebookButton } from "@/components";
+import { GoogleButton, FacebookButton } from "@/app/components";
 import { useAppDispatch } from "@/redux/hooks";
 import { login } from "@/redux/slices/authSlices";
 import { useAppSelector } from "@/redux/hooks";

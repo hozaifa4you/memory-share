@@ -9,12 +9,13 @@ import { MemoryMediaUploadType } from "@/api-config/API";
 
 interface PropTypes {
   images: MemoryMediaUploadType[];
-  deletePhoto: (photoId: string) => void;
+  deletePhoto: (photoName: string) => void;
+  isLoading: { isLoading: boolean; id: string };
 }
 
 const backend_origin = process.env.NEXT_PUBLIC_BACKEND_ORIGIN as string;
 
-const UploadedImage = ({ images, deletePhoto }: PropTypes) => {
+const UploadedImage = ({ images, deletePhoto, isLoading }: PropTypes) => {
   return (
     <PhotoProvider
       toolbarRender={({ rotate, onRotate, onScale, scale }) => {
@@ -93,6 +94,7 @@ const UploadedImage = ({ images, deletePhoto }: PropTypes) => {
                 variant="outline"
                 color="red"
                 onClick={() => deletePhoto(image.filename)}
+                loading={isLoading.isLoading && isLoading.id === image.filename}
               >
                 <IconTrashX size={20} />
               </ActionIcon>

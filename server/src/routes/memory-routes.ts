@@ -27,7 +27,7 @@ memoryRoutes.route("/upload").post(
 
 memoryRoutes
   .route("/delete-photo")
-  .post(
+  .delete(
     asyncHandler(authentication),
     asyncHandler(memoryCtrls.deleteMemoryPhoto)
   );

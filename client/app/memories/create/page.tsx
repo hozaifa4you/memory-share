@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React, { useState } from "react";
 import {
@@ -16,11 +17,18 @@ import { useForm } from "@mantine/form";
 
 import { FileUpload, UploadedImage } from "@/app/components";
 import { useAppSelector } from "@/redux/hooks";
-import type { MemoryMediaUploadType } from "@/api-config/API";
+import {
+  MemoryMediaUploadType,
+  API,
+  DeletePhotoReturnType,
+} from "@/api-config/API";
+import { AxiosError } from "axios";
+import { notifications } from "@mantine/notifications";
 
 const MemoryCreate = () => {
   const { user } = useAppSelector((state) => state.authentication);
   const [images, setImages] = useState<MemoryMediaUploadType[]>([]);
+  const [isLoading, setIsLoading] = useState({ isLoading: false, id: "" });
 
   const form = useForm({
     initialValues: {
@@ -43,8 +51,37 @@ const MemoryCreate = () => {
     // },
   });
 
-  const deletePhoto = (photoId: string) => {
-    console.log("🔥🔥🔥 delete photo id", photoId);
+  const deletePhoto = async (photoName: string) => {
+    console.log("🔥🔥🔥 delete photo id", photoName);
+    setIsLoading({ isLoading: true, id: photoName });
+    try {
+      const { data } = await API.delete<DeletePhotoReturnType>(
+        `/api/v1/memories/delete-photo?photoName=${photoName}`,
+        { headers: { authorization: `Bearer ${user?.token}` } }
+      );
+      if (data.success) {
+        setImages((prev) => prev.filter((x) => x.filename !== data.photoName));
+        notifications.show({
+          title: "🚀 Memory Creation information 🔥",
+          message: "Successfully photo deleted",
+          color: "orange",
+        });
+      }
+    } catch (error: any) {
+      let err_message;
+      if (error instanceof AxiosError) {
+        err_message = error.response?.data.message;
+      } else {
+        err_message = error.message;
+      }
+      notifications.show({
+        title: "🚀 Memory Creation information 🔥",
+        message: err_message,
+        color: "yellow",
+      });
+    } finally {
+      setIsLoading({ isLoading: false, id: "" });
+    }
   };
 
   return (
@@ -190,7 +227,11 @@ const MemoryCreate = () => {
                 <Text size="md" weight={500} mb={-5}>
                   Uploaded images
                 </Text>
-                <UploadedImage images={images} deletePhoto={deletePhoto} />
+                <UploadedImage
+                  images={images}
+                  deletePhoto={deletePhoto}
+                  isLoading={isLoading}
+                />
               </>
             ) : (
               <>

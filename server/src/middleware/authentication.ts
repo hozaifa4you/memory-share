@@ -28,23 +28,23 @@ export const authentication = async (
 
   if (!header || !header.startsWith("Bearer ")) {
     res.status(401);
-    throw new Error("⚠️ unauthorized request ❌");
+    throw new Error("⚠️ unauthorized request 1 ❌");
   }
 
   const token = header.split(" ")[1];
   if (!token) {
     res.status(401);
-    throw new Error("⚠️ unauthorized request ❌");
+    throw new Error("⚠️ unauthorized request 2 ❌");
   }
   const decoded = jwt.verify(token, jwt_secret) as DecodedUserType;
   if (!decoded) {
     res.status(401);
-    throw new Error("⚠️ unauthorized request ❌");
+    throw new Error("⚠️ unauthorized request 3 ❌");
   }
   const user = await prisma.user.findFirst({ where: { id: decoded.id } });
   if (!user) {
     res.status(401);
-    throw new Error("⚠️ unauthorized request ❌");
+    throw new Error("⚠️ unauthorized request 4 ❌");
   }
 
   req.user = decoded;

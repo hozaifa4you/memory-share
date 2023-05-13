@@ -35,3 +35,8 @@ export interface MemoryMediaUploadType {
   path: string;
   size: string;
 }
+
+export interface DeletePhotoReturnType {
+  success: boolean;
+  photoName: string;
+}

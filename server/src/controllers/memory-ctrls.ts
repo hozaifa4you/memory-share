@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
@@ -48,7 +49,7 @@ class MemoriesControllers {
 
   // TODO: delete photo
   async deleteMemoryPhoto(req: Request, res: Response, next: NextFunction) {
-    const photoName = req.params.photoName;
+    const photoName = req.query.photoName;
 
     if (!photoName) {
       res.status(404);
@@ -58,7 +59,6 @@ class MemoriesControllers {
     fs.stat(`./public/memory/${photoName}`, function (err, state) {
       if (err) return next(err);
       else {
-        console.log("🐼🐼🐼 delete photo state: ", state);
         fs.unlink(`./public/memory/${photoName}`, function (err) {
           if (err) return next(err);
           else {
