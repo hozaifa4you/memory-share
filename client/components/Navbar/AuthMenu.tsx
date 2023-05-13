@@ -21,7 +21,7 @@ import {
   IconHeart,
 } from "@tabler/icons-react";
 
-import { useAppSelector, useAppDispatch } from "@/redux/hooks/hooks";
+import { useAppSelector, useAppDispatch } from "@/redux/hooks";
 import { selectLogin, logout } from "@/redux/slices/authSlices";
 
 const useStyles = createStyles((theme) => ({

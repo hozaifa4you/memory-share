@@ -5,6 +5,7 @@ import { z } from "zod";
 const prisma = new PrismaClient();
 
 class MemoriesControllers {
+  // TODO: create memory
   async createMemory(req: Request, res: Response) {
     const bodyData = req.body;
 

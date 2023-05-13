@@ -21,9 +21,9 @@ import lodash from "lodash";
 import { notifications } from "@mantine/notifications";
 
 import { GoogleButton, FacebookButton } from "@/components";
-import { useAppDispatch } from "@/redux/hooks/hooks";
+import { useAppDispatch } from "@/redux/hooks";
 import { login } from "@/redux/slices/authSlices";
-import { useAppSelector } from "@/redux/hooks/hooks";
+import { useAppSelector } from "@/redux/hooks";
 import { selectLogin, setStatus } from "@/redux/slices/authSlices";
 import { STATUS } from "@/redux/status";
 import { API, type RegisterUserTypes } from "@/api-config/API";

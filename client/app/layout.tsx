@@ -1,6 +1,11 @@
-import { Navbar, Providers } from "@/components";
+"use client";
+import { Footer, Navbar } from "@/components";
 import "./globals.css";
 import { Inter } from "next/font/google";
+
+import { ReduxProvider } from "@/redux/ReduxProvider";
+import { MantineProvider } from "@mantine/core";
+import { theme } from "@/utils/theme";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,13 +20,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <Providers>
-      <html lang="en">
-        <body className={inter.className}>
-          <Navbar />
-          {children}
-        </body>
-      </html>
-    </Providers>
+    <html lang="en">
+      <body className={inter.className}>
+        <MantineProvider theme={theme}>
+          <ReduxProvider>
+            <Navbar />
+
+            {children}
+
+            <Footer />
+          </ReduxProvider>
+        </MantineProvider>
+      </body>
+    </html>
   );
 }

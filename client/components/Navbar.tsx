@@ -33,7 +33,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { Logo, AuthMenu } from "@/components";
-import { useAppSelector } from "@/redux/hooks/hooks";
+import { useAppSelector } from "@/redux/hooks";
 import { selectLogin } from "@/redux/slices/authSlices";
 
 const useStyles = createStyles((theme) => ({
@@ -144,7 +144,7 @@ const Navbar = () => {
   const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
   const { classes, theme } = useStyles();
   const router = useRouter();
-  const { error, isAuth, status, token, user } = useAppSelector(selectLogin);
+  const { isAuth, token, user } = useAppSelector(selectLogin);
 
   const links = mockdata.map((item) => (
     <UnstyledButton className={classes.subLink} key={item.title}>

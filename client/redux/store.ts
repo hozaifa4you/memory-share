@@ -6,6 +6,7 @@ export const store = configureStore({
   reducer: {
     authentication: authSlice,
   },
+  devTools: process.env.NODE_ENV === "development",
 });
 
 export type AppDispatch = typeof store.dispatch;

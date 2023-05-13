@@ -15,7 +15,13 @@ memoryRoutes.route("/upload").post(
   asyncHandler(authentication),
   asyncHandler(memoryImageUpload.array("memory", 5)),
   asyncHandler((req, res) => {
-    res.send(req.files);
+    const files = req.files;
+    if (files?.length === 0) {
+      res.status(500);
+      throw new Error("⚠️ files not found! ❌");
+    }
+
+    res.status(200).json(files);
   })
 );
 export default memoryRoutes;

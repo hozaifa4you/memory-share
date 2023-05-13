@@ -24,3 +24,14 @@ export interface RegisterUserTypes {
 export interface LoginUserTypes extends RegisterUserTypes {
   token: string;
 }
+
+export interface MemoryMediaUploadType {
+  destination: string;
+  encoding: string;
+  fieldname: string;
+  filename: string;
+  mimetype: string;
+  originalname: string;
+  path: string;
+  size: string;
+}
