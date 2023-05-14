@@ -20,6 +20,7 @@ import {
   IconPassword,
   IconBrand4chan,
   IconBrandBlogger,
+  IconUserCheck,
 } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 
@@ -139,6 +140,9 @@ const AuthMenu = () => {
         </Menu.Item>
 
         <Menu.Label>Settings</Menu.Label>
+        <Menu.Item icon={<IconUserCheck size="0.9rem" stroke={1.5} />}>
+          Account Profile
+        </Menu.Item>
         <Menu.Item icon={<IconSettings size="0.9rem" stroke={1.5} />}>
           Account settings
         </Menu.Item>
