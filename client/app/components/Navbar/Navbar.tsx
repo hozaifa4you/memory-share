@@ -189,10 +189,10 @@ const Navbar = () => {
               withinPortal
             >
               <HoverCard.Target>
-                <Link href="/features" className={classes.link}>
+                <Link href="/memories" className={classes.link}>
                   <Center inline>
                     <Box component="span" mr={5}>
-                      Features
+                      Memories
                     </Box>
                     <IconChevronDown
                       size={16}
