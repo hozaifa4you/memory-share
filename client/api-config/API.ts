@@ -40,3 +40,8 @@ export interface DeletePhotoReturnType {
   success: boolean;
   photoName: string;
 }
+
+export interface Slug {
+  success: boolean;
+  slug: string;
+}

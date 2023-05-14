@@ -11,11 +11,14 @@ import {
   Button,
   Textarea,
   Grid,
+  Code,
+  NativeSelect,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
+import lodash from "lodash";
 
 import { FileUpload, UploadedImage } from "@/app/components";
 import { useAppSelector } from "@/redux/hooks";
@@ -23,6 +26,7 @@ import {
   MemoryMediaUploadType,
   API,
   DeletePhotoReturnType,
+  Slug,
 } from "@/api-config/API";
 
 const MemoryCreate = () => {
@@ -31,6 +35,7 @@ const MemoryCreate = () => {
   );
   const [images, setImages] = useState<MemoryMediaUploadType[]>([]);
   const [isLoading, setIsLoading] = useState({ isLoading: false, id: "" });
+  const [loading, setLoading] = useState(false);
   const route = useRouter();
 
   const form = useForm({
@@ -43,6 +48,8 @@ const MemoryCreate = () => {
       state: "",
       country: "",
       zip: "",
+      category: "",
+      tags: "",
     },
 
     validate: {
@@ -53,14 +60,21 @@ const MemoryCreate = () => {
             "characters"
           : null,
       body: (val) =>
-        val.length < 120
-          ? "Description is too short, please add some text at least 120 characters."
+        val.length < 150
+          ? "Description is too short, please add some text at least 150 characters. got " +
+            val.length +
+            "characters"
+          : null,
+      slug: (val) =>
+        val.includes(" ") ? "Invalid slug, slug must be url standard" : null,
+      tags: (val) =>
+        val.includes(" ")
+          ? "Invalid tag name, tag name must not be includes white space"
           : null,
     },
   });
 
   const deletePhoto = async (photoName: string) => {
-    console.log("🔥🔥🔥 delete photo id", photoName);
     setIsLoading({ isLoading: true, id: photoName });
     try {
       const { data } = await API.delete<DeletePhotoReturnType>(
@@ -92,6 +106,95 @@ const MemoryCreate = () => {
     }
   };
 
+  // TODO: slug generate
+  const generateSlug = async () => {
+    if (form.values.title.length < 10) return;
+
+    setLoading(true);
+    try {
+      const { data } = await API.post<Slug>(
+        "/api/v1/memories/slug",
+        { slug: form.values.title },
+        { headers: { authorization: `Bearer ${user?.token}` } }
+      );
+
+      if (data.success) {
+        form.setFieldValue("slug", data.slug);
+        notifications.show({
+          title: "🚀 Memory Creation information 🔥",
+          message: "New Slug generated",
+          color: "indigo",
+        });
+      }
+    } catch (error: any) {
+      let err_message;
+      if (error instanceof AxiosError) {
+        err_message = error.response?.data.message;
+      } else {
+        err_message = error.message;
+      }
+      notifications.show({
+        title: "🚀 Memory Creation information 🔥",
+        message: err_message,
+        color: "yellow",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // TODO: submit memory to api
+  const submitHandler = async (data: typeof form.values) => {
+    setLoading(true);
+    const formatImages = images.map((x) => x.filename);
+    try {
+      const submitObj = {
+        ...lodash.omit(data, ["street", "city", "state", "country", "zip"]),
+        images: formatImages,
+        place: {
+          street: data.street,
+          city: data.city,
+          state: data.state,
+          country: data.country,
+          zip: data.zip,
+        },
+      };
+
+      const { data: responseData } = await API.post(
+        "/api/v1/memories/create",
+        submitObj,
+        { headers: { authorization: `Bearer ${user?.token}` } }
+      );
+
+      if (responseData) {
+        notifications.show({
+          title: "🚀 Memory Creation information 🔥",
+          message: "Successfully new memory created",
+          color: "green",
+        });
+
+        form.reset();
+        route.push("/"); // FIXME: in future replace it on your memories
+      }
+
+      console.log("🐼🐼🐼 sumbit obj", submitObj);
+    } catch (error: any) {
+      let err_message;
+      if (error instanceof AxiosError) {
+        err_message = error.response?.data.message;
+      } else {
+        err_message = error.message;
+      }
+      notifications.show({
+        title: "🚀 Memory Creation information 🔥",
+        message: err_message,
+        color: "yellow",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!user || !token || !isAuth) {
       route.replace("/");
@@ -105,11 +208,7 @@ const MemoryCreate = () => {
           Welcome to Memory, Create a new memory.
         </Text>
 
-        <form
-          onSubmit={form.onSubmit((data) => {
-            console.log(data);
-          })}
-        >
+        <form onSubmit={form.onSubmit(submitHandler)}>
           <Stack>
             <TextInput
               label="Memory Title"
@@ -121,6 +220,7 @@ const MemoryCreate = () => {
               radius="md"
               required
               error={form.errors.title}
+              onBlur={generateSlug}
             />
 
             <TextInput
@@ -131,9 +231,39 @@ const MemoryCreate = () => {
               onChange={(event) =>
                 form.setFieldValue("slug", event.currentTarget.value)
               }
-              error={form.errors.slug && "Invalid slug"}
+              error={form.errors.slug}
               radius="md"
             />
+
+            <Grid>
+              <Grid.Col xs={6}>
+                <NativeSelect
+                  description="Select from menu"
+                  label="Category"
+                  placeholder="Select Category"
+                  value={form.values.category}
+                  onChange={(event) =>
+                    form.setFieldValue("category", event.currentTarget.value)
+                  }
+                  data={["Select One", "React", "Vue", "Angular", "Svelte"]}
+                  radius="md"
+                />
+              </Grid.Col>
+              <Grid.Col xs={6}>
+                <TextInput
+                  required
+                  label="Tags"
+                  placeholder="Input some tags"
+                  description="separate by comma ','"
+                  value={form.values.tags}
+                  onChange={(event) =>
+                    form.setFieldValue("tags", event.currentTarget.value)
+                  }
+                  error={form.errors.tags}
+                  radius="sm"
+                />
+              </Grid.Col>
+            </Grid>
 
             <Text fw={500} mb={-15}>
               Place of memory
@@ -159,8 +289,9 @@ const MemoryCreate = () => {
                   onChange={(event) =>
                     form.setFieldValue("zip", event.currentTarget.value)
                   }
-                  error={form.errors.zip && "Invalid slug"}
+                  error={form.errors.zip}
                   radius="md"
+                  type="number"
                 />
               </Grid.Col>
               <Grid.Col xs={4}>
@@ -219,7 +350,8 @@ const MemoryCreate = () => {
             {user && (
               <>
                 <Text size="md" weight={500} mb={-10}>
-                  Upload your memory photos: max 5 images
+                  Upload your memory photos:{" "}
+                  <Code color="pink">max 5 images</Code>
                 </Text>
                 <FileUpload
                   user={user}
@@ -247,7 +379,7 @@ const MemoryCreate = () => {
             <Button type="button" radius="md" variant="outline" color="yellow">
               Cancel
             </Button>
-            <Button type="submit" radius="md">
+            <Button type="submit" radius="md" loading={loading}>
               Create New
             </Button>
           </Group>

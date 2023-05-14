@@ -1,10 +1,6 @@
 import { Footer, Navbar } from "@/app/components";
 import "./globals.css";
-import { Inter } from "next/font/google";
-
 import { Providers } from "@/app/components";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: "Memories | Share your outstanding memories",
@@ -19,7 +15,7 @@ export default function RootLayout({
   return (
     <Providers>
       <html lang="en">
-        <body className={inter.className}>
+        <body>
           <Navbar />
           {children}
           <Footer />

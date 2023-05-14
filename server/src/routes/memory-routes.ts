@@ -31,4 +31,8 @@ memoryRoutes
     asyncHandler(authentication),
     asyncHandler(memoryCtrls.deleteMemoryPhoto)
   );
+
+memoryRoutes
+  .route("/slug")
+  .post(asyncHandler(authentication), asyncHandler(memoryCtrls.slugGenerator));
 export default memoryRoutes;
