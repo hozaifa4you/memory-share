@@ -11,6 +11,8 @@ memoryRoutes
   .route("/create")
   .post(asyncHandler(authentication), asyncHandler(memoryCtrls.createMemory));
 
+memoryRoutes.route("/get-all").get(asyncHandler(memoryCtrls.getAllMemories));
+
 memoryRoutes.route("/upload").post(
   asyncHandler(authentication),
   asyncHandler(memoryImageUpload.array("memory", 5)),

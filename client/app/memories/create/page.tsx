@@ -13,6 +13,7 @@ import {
   Grid,
   Code,
   NativeSelect,
+  Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
@@ -202,11 +203,11 @@ const MemoryCreate = () => {
   }, [isAuth, route, token, user]);
 
   return (
-    <Container size="sm" mt={50}>
+    <Container size="md" mt={50}>
       <Paper radius="md" p="xl" withBorder>
-        <Text size="lg" weight={500} mb={20}>
+        <Title mb={20} order={2} align="center">
           Welcome to Memory, Create a new memory.
-        </Text>
+        </Title>
 
         <form onSubmit={form.onSubmit(submitHandler)}>
           <Stack>

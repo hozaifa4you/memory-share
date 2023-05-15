@@ -19,6 +19,7 @@ export const errorHandler = (
   err: HttpException,
   req: Request,
   res: Response,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   next: NextFunction
 ) => {
   let status: number = err.status || 500;
@@ -42,8 +43,11 @@ export const errorHandler = (
     status = 404;
   }
 
-  // TODO: duplicate error
-  // console.error("🚀🚀❌❌ error showing: ", err);
+  // TODO: duplicate error => prisma
+  if (String(err.code) === "P2002") {
+    status = 409;
+    message = "❌ Duplicate record entered ⚠️";
+  }
 
   return res.status(status).json({
     success: false,

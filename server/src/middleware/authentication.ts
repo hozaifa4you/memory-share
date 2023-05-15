@@ -19,6 +19,7 @@ export interface DecodedUserType {
   exp: number;
 }
 
+// FIXME: the error number in production
 export const authentication = async (
   req: Request,
   res: Response,

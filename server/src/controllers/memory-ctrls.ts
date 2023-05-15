@@ -4,6 +4,7 @@ import { z } from "zod";
 import fs from "fs";
 import slug from "slug";
 import crypto from "crypto";
+import { MemoryType } from "@/utils/options";
 
 const prisma = new PrismaClient();
 
@@ -12,7 +13,7 @@ class MemoriesControllers {
   async createMemory(req: Request, res: Response) {
     const bodyData = req.body;
 
-    const { body, slug, title, images, place, category, tags } = z
+    const { body, slug, title, images, place, category, tags, memoryType } = z
       .object({
         slug: z.string({ required_error: "⚠️ Slug is required 🔥" }).trim(),
         title: z
@@ -32,19 +33,26 @@ class MemoriesControllers {
           .optional(),
         tags: z.string({ required_error: "⚠️ Tags name is required 🔥" }),
         category: z.string({ required_error: "⚠️ category is required 🔥" }),
+        memoryType: z.nativeEnum(MemoryType),
       })
       .parse(bodyData);
 
     const tagsArr = tags.split(",");
 
+    if (!req.user) {
+      res.status(404);
+      throw new Error("⚠️ User not found ❌");
+    }
+
     const memory = await prisma.memory.create({
       data: {
-        user: { connect: { id: "645da107cb879d3f2e84228f" } },
+        user: { connect: { id: req.user.id } },
         body,
         slug,
         title,
         images,
         category,
+        memoryType,
         tags: tagsArr,
         place: { create: { ...place } },
       },
@@ -65,6 +73,20 @@ class MemoriesControllers {
     });
 
     res.status(201).json(memory);
+  }
+
+  // TODO: get all memories
+  async getAllMemories(req: Request, res: Response) {
+    const memories = await prisma.memory.findMany({
+      where: { NOT: { memoryType: "Secret" } },
+    });
+
+    if (!memories.length) {
+      res.status(404);
+      throw new Error("No available memory!");
+    }
+
+    res.status(200).json(memories);
   }
 
   // TODO: delete photo

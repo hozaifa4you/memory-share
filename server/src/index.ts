@@ -23,7 +23,7 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface Request {
-      user?: DecodedUserType | string | undefined | null;
+      user?: DecodedUserType | undefined | null;
     }
   }
 }

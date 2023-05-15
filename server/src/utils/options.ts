@@ -9,3 +9,9 @@ export enum ErrorType {
   ValidationError = "ValidationError",
   NoDirError = "ENOENT",
 }
+
+export enum MemoryType {
+  Public = "Public",
+  Secret = "Secret",
+  Private = "Private",
+}

@@ -4,12 +4,15 @@ import Logo from "./Navbar/Logo";
 
 import Footer from "./Footer";
 import Providers from "./Providers";
+import UserButton from "./UserButton";
 
 import MostReadMemory from "./Home/MostReadMemories";
 import Landing from "./Home/Landing";
 
-import FileUpload from "./CreateMemory/FileUpload";
-import UploadedImage from "./CreateMemory/UploadedImage";
+import FileUpload from "./Memory/FileUpload";
+import UploadedImage from "./Memory/UploadedImage";
+import MemoryCard from "./Memory/MemoryCard";
+import SideMenu from "./Memory/SideMenu";
 
 import { FacebookIcon } from "./button/btton-icons";
 import { GoogleIcon } from "./button/btton-icons";
@@ -40,4 +43,7 @@ export {
   UploadedImage,
   Landing,
   MostReadMemory,
+  MemoryCard,
+  SideMenu,
+  UserButton,
 };
