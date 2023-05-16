@@ -18,12 +18,15 @@ const frontend_origin = process.env.FRONTEND_ORIGIN as string;
 const backend_origin = process.env.BACKEND_ORIGIN as string;
 const app = express();
 
+type ReadPrivacy = "Public" | "Secret" | "Private";
+
 // declare
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface Request {
       user?: DecodedUserType | undefined | null;
+      readPermission?: ReadPrivacy | null | undefined;
     }
   }
 }

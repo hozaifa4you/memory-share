@@ -51,3 +51,34 @@ export const authentication = async (
   req.user = decoded;
   next();
 };
+
+// FIXME: the error number in production
+export const readPermission = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const header = req.headers.authorization;
+
+  if (!header || !header.startsWith("Bearer ")) {
+    req.readPermission = "Public";
+    next();
+  } else {
+    const token = header.split(" ")[1];
+    const decoded = jwt.verify(token, jwt_secret) as DecodedUserType;
+    req.user = decoded;
+    if (!decoded) {
+      res.status(401);
+      throw new Error("⚠️ unauthorized request❌");
+    }
+    const user = await prisma.user.findFirst({ where: { id: decoded.id } });
+    if (!user) {
+      res.status(401);
+      throw new Error("⚠️ unauthorized request 4 ❌");
+    }
+    if (user) {
+      req.readPermission = "Private";
+      next();
+    }
+  }
+};

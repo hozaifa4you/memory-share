@@ -1,6 +1,5 @@
 /* eslint-disable indent */
 "use client";
-import React from "react";
 import { GetStaticProps } from "next";
 import {
   Grid,
@@ -15,9 +14,15 @@ import { QueryClient, useQuery, dehydrate } from "react-query";
 
 import { MemoryCard2, SideMenu } from "@/app/components";
 import { allMemories } from "@/api-config/API";
+import { selectLogin } from "@/redux/slices/authSlices";
+import { useAppSelector } from "@/redux/hooks";
 
 const Memories = () => {
-  const { data } = useQuery({ queryKey: ["memories"], queryFn: allMemories });
+  const { token } = useAppSelector(selectLogin) as { token: string };
+  const { data } = useQuery({
+    queryKey: ["memories", token],
+    queryFn: async () => await allMemories(token),
+  });
 
   return (
     <main style={{ marginTop: "50px", marginBottom: "100px" }}>
@@ -28,7 +33,7 @@ const Memories = () => {
             sx={{
               width: "145px",
               height: "4px",
-              background: "#FF00A1",
+              background: "var(--fix-pink)",
               marginBottom: "20px",
             }}
           />
@@ -80,7 +85,7 @@ export default Memories;
 export const getStaticProps: GetStaticProps = async () => {
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery(["memories"], allMemories);
+  await queryClient.prefetchQuery(["memories"], () => allMemories("token"));
 
   return { props: { dehydratedState: dehydrate(queryClient) } };
 };

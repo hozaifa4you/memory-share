@@ -1,5 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap");
 
+:root {
+  --fix-pink: #ff00a1;
+}
+
 * {
   margin: 0;
   padding: 0;

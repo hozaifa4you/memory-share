@@ -53,6 +53,7 @@ model Memory {
   category   String
   memoryType MemoryType @default(Public)
   readTime   Int?       @default(0)
+  joined     String[]   @db.ObjectId
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
 

@@ -72,11 +72,19 @@ export const API: AxiosInstance = axios.create({
 });
 
 // TODO: get all post => react query
-export const allMemories = async () => {
-  const { data } = await API.get<AllMemoriesTypes[]>(
-    "/api/v1/memories/get-all"
-  );
-  return data;
+export const allMemories = async (token?: string) => {
+  if (token) {
+    const { data } = await API.get<AllMemoriesTypes[]>(
+      "/api/v1/memories/get-all",
+      { headers: { authorization: `Bearer ${token}` } }
+    );
+    return data;
+  } else {
+    const { data } = await API.get<AllMemoriesTypes[]>(
+      "/api/v1/memories/get-all"
+    );
+    return data;
+  }
 };
 
 // TODO: get memory by slug

@@ -1,9 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import { Memory, PrismaClient } from "@prisma/client";
 import { z } from "zod";
 import fs from "fs";
 import slug from "slug";
 import crypto from "crypto";
+import lodash from "lodash";
+
 import { MemoryType } from "@/utils/options";
 
 const prisma = new PrismaClient();
@@ -75,24 +77,52 @@ class MemoriesControllers {
     res.status(201).json(memory);
   }
 
-  // TODO: get all memories
+  // TODO: get all memories with condition
   async getAllMemories(req: Request, res: Response) {
-    const memories = await prisma.memory.findMany({
-      where: { NOT: { memoryType: "Secret" } },
-      include: {
-        place: { select: { country: true } },
-        user: {
-          select: { id: true, name: true, avatar: true, username: true },
+    let memories: Memory[] | null;
+
+    if (req.readPermission === "Public") {
+      memories = await prisma.memory.findMany({
+        where: { AND: { memoryType: "Public" } },
+        include: {
+          place: { select: { country: true } },
+          user: {
+            select: { id: true, name: true, avatar: true, username: true },
+          },
         },
-      },
-    });
+      });
+      res.status(201).json(memories);
+    } else if (req.readPermission === "Private") {
+      if (!req.user) {
+        res.status(403);
+        throw new Error("⚠️ un auth 🔥");
+      }
+      memories = await prisma.memory.findMany({
+        where: { NOT: { memoryType: "Secret" } },
+        include: {
+          place: { select: { country: true } },
+          user: {
+            select: { id: true, name: true, avatar: true, username: true },
+          },
+        },
+      });
 
-    if (!memories.length) {
-      res.status(404);
-      throw new Error("No available memory!");
+      const memoriesSecret = await prisma.memory.findMany({
+        where: {
+          AND: [
+            { memoryType: "Secret" },
+            { joined: { hasEvery: [req.user.id] } },
+          ],
+        },
+        include: {
+          place: { select: { country: true } },
+          user: {
+            select: { id: true, name: true, avatar: true, username: true },
+          },
+        },
+      });
+      res.status(201).json([...memories, ...memoriesSecret]);
     }
-
-    res.status(200).json(memories);
   }
 
   // TODO: delete photo
@@ -116,6 +146,43 @@ class MemoriesControllers {
         });
       }
     });
+  }
+
+  // TODO: get memory by slug
+  async getMemoryBySlug(req: Request, res: Response) {
+    console.log("query 😍😍😍 ", req.params);
+
+    const slug = req.params.slug as string;
+
+    if (!slug) {
+      res.status(404);
+      throw new Error("🔥 slug not found! ⚠️");
+    }
+
+    const memory = await prisma.memory.findFirst({ where: { slug } });
+
+    if (memory?.memoryType === "Private") {
+      if (req.user) {
+        res.status(200).json(memory);
+      } else {
+        res.status(403);
+        throw new Error("🔥 Memory is private, please login! ⚠️");
+      }
+    } else if (memory?.memoryType === "Secret") {
+      if (req.user) {
+        if (lodash.includes(memory.joined, req.user?.id)) {
+          res.status(200).json(memory);
+        } else {
+          res.status(403);
+          throw new Error("🔥 Your don't have permission to the memory! ⚠️");
+        }
+      } else {
+        res.status(403);
+        throw new Error("🔥 Memory is Secret, please login! ⚠️");
+      }
+    } else if (memory?.memoryType === "Public") {
+      res.status(200).json(memory);
+    }
   }
 
   // TODO: slug generator

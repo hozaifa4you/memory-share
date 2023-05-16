@@ -159,7 +159,9 @@ const AuthMenu = () => {
         </Menu.Item>
         <Menu.Item
           icon={<IconLogout size="0.9rem" stroke={1.5} />}
-          onClick={() => dispatch(logout())}
+          onClick={() => {
+            dispatch(logout());
+          }}
           color="orange"
         >
           Logout

@@ -2,7 +2,7 @@ import { Router } from "express";
 import asyncHandler from "express-async-handler";
 
 import memoryCtrls from "@/controllers/memory-ctrls";
-import { authentication } from "@/middleware/authentication";
+import { authentication, readPermission } from "@/middleware/authentication";
 import { memoryImageUpload } from "@/middleware/memory-image-upload";
 
 const memoryRoutes = Router();
@@ -11,7 +11,9 @@ memoryRoutes
   .route("/create")
   .post(asyncHandler(authentication), asyncHandler(memoryCtrls.createMemory));
 
-memoryRoutes.route("/get-all").get(asyncHandler(memoryCtrls.getAllMemories));
+memoryRoutes
+  .route("/get-all")
+  .get(asyncHandler(readPermission), asyncHandler(memoryCtrls.getAllMemories));
 
 memoryRoutes.route("/upload").post(
   asyncHandler(authentication),
@@ -26,6 +28,10 @@ memoryRoutes.route("/upload").post(
     res.status(200).json(files);
   })
 );
+
+memoryRoutes
+  .route("/get-memory-by-slug/:slug")
+  .get(asyncHandler(memoryCtrls.getMemoryBySlug));
 
 memoryRoutes
   .route("/delete-photo")
