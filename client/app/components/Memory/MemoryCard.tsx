@@ -1,135 +1,138 @@
 "use client";
-import { IconBookmark, IconHeart, IconShare } from "@tabler/icons-react";
+import Link from "next/link";
 import {
+  createStyles,
   Card,
   Image,
-  Text,
   ActionIcon,
-  Badge,
   Group,
-  Center,
+  Text,
   Avatar,
-  createStyles,
+  Badge,
   rem,
+  Box,
 } from "@mantine/core";
+import { IconHeart, IconBookmark, IconShare } from "@tabler/icons-react";
+
+const backend_origin = process.env.NEXT_PUBLIC_BACKEND_ORIGIN as string;
 
 const useStyles = createStyles((theme) => ({
   card: {
-    position: "relative",
     backgroundColor:
       theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
   },
-
-  rating: {
-    position: "absolute",
-    top: theme.spacing.xs,
-    right: rem(12),
-    pointerEvents: "none",
+  link: {
+    textDecoration: "none",
+    transition: "all .4s ease-in-out",
+    ":hover": {
+      textDecoration: "underline",
+    },
   },
-
   title: {
-    display: "block",
-    marginTop: theme.spacing.md,
-    marginBottom: rem(5),
+    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+    color: theme.colors.dark[5],
   },
-
-  action: {
-    backgroundColor:
-      theme.colorScheme === "dark"
-        ? theme.colors.dark[6]
-        : theme.colors.gray[0],
-    ...theme.fn.hover({
-      backgroundColor:
-        theme.colorScheme === "dark"
-          ? theme.colors.dark[5]
-          : theme.colors.gray[1],
-    }),
-  },
-
   footer: {
+    padding: `${theme.spacing.xs} ${theme.spacing.lg}`,
     marginTop: theme.spacing.md,
+    borderTop: `${rem(1)} solid ${
+      theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[2]
+    }`,
   },
 }));
 
-interface ArticleCardProps {
+interface CardProps {
   image: string;
-  link: string;
   title: string;
-  description: string;
-  rating: string;
   author: {
+    id: string;
     name: string;
-    image: string;
+    avatar: string;
+    username: string;
   };
+  category: string;
+  slug: string;
+  readTime: number;
 }
 
-export default function MemoryCard({
-  className,
+export default function ArticleCardFooter({
   image,
-  link,
+  category,
   title,
-  description,
+  slug,
   author,
-  rating,
-  ...others
-}: ArticleCardProps &
-  Omit<React.ComponentPropsWithoutRef<"div">, keyof ArticleCardProps>) {
-  const { classes, cx, theme } = useStyles();
-  const linkProps = {
-    href: link,
-    target: "_blank",
-    rel: "noopener noreferrer",
-  };
+  readTime,
+}: CardProps) {
+  const { classes, theme } = useStyles();
 
   return (
-    <Card
-      withBorder
-      radius="md"
-      className={cx(classes.card, className)}
-      {...others}
-    >
-      <Card.Section>
-        <a {...linkProps}>
-          <Image src={image} height={180} alt="Memory Image" />
-        </a>
+    <Card withBorder padding="lg" radius="md" className={classes.card}>
+      <Card.Section mb="sm">
+        <Image
+          src={`${backend_origin}/public/memory/${image}`}
+          alt={title}
+          height={180}
+        />
       </Card.Section>
 
-      <Badge
-        className={classes.rating}
-        variant="gradient"
-        gradient={{ from: "yellow", to: "red" }}
+      <Badge color="blue">{category}</Badge>
+
+      <Box
+        className={classes.link}
+        display="block"
+        component={Link}
+        href={`/memories/read/${slug}`}
       >
-        {rating}
-      </Badge>
+        <Text fw={700} className={classes.title} mt="xs" component="h3">
+          {title}
+        </Text>
+      </Box>
 
-      <Text className={classes.title} fw={500} component="a" {...linkProps}>
-        {title}
-      </Text>
-
-      <Text fz="sm" color="dimmed" lineClamp={4}>
-        {description}
-      </Text>
-
-      <Group position="apart" className={classes.footer}>
-        <Center>
-          <Avatar src={author.image} size={24} radius="xl" mr="xs" />
-          <Text fz="sm" inline>
+      <Group mt="lg">
+        <Avatar src={author.avatar} radius="sm" color="pink" />
+        <Link
+          href={"/users/@username"}
+          style={{ display: "block", textDecoration: "none" }}
+        >
+          <Text fw={500} color="blue">
             {author.name}
           </Text>
-        </Center>
-
-        <Group spacing={8} mr={0}>
-          <ActionIcon className={classes.action}>
-            <IconHeart size="1rem" color={theme.colors.red[6]} />
-          </ActionIcon>
-          <ActionIcon className={classes.action}>
-            <IconBookmark size="1rem" color={theme.colors.yellow[7]} />
-          </ActionIcon>
-          <ActionIcon className={classes.action}>
-            <IconShare size="1rem" />
-          </ActionIcon>
-        </Group>
+          <Text fz="xs" c="dimmed">
+            I have 6 memories
+          </Text>
+        </Link>
       </Group>
+
+      <Card.Section className={classes.footer}>
+        <Group position="apart">
+          <Text fz="xs" c="dimmed">
+            {`${readTime} people watched this`}
+          </Text>
+          <Group spacing={0}>
+            <ActionIcon>
+              <IconHeart
+                size="1.2rem"
+                color={theme.colors.red[6]}
+                stroke={1.5}
+              />
+            </ActionIcon>
+            <ActionIcon>
+              <IconBookmark
+                size="1.2rem"
+                color={theme.colors.yellow[6]}
+                stroke={1.5}
+              />
+            </ActionIcon>
+            <ActionIcon>
+              <IconShare
+                size="1.2rem"
+                color={theme.colors.blue[6]}
+                stroke={1.5}
+              />
+            </ActionIcon>
+          </Group>
+        </Group>
+      </Card.Section>
     </Card>
   );
 }

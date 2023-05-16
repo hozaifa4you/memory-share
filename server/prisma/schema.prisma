@@ -52,6 +52,7 @@ model Memory {
   tags       String[]
   category   String
   memoryType MemoryType @default(Public)
+  readTime   Int?       @default(0)
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
 

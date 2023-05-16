@@ -1,25 +1,24 @@
+/* eslint-disable indent */
 "use client";
 import React from "react";
-import { Grid, Container, Stack, Pagination, Box, Title } from "@mantine/core";
+import { GetStaticProps } from "next";
+import {
+  Grid,
+  Container,
+  Stack,
+  Pagination,
+  Box,
+  Title,
+  Loader,
+} from "@mantine/core";
+import { QueryClient, useQuery, dehydrate } from "react-query";
 
-import { MemoryCard, SideMenu } from "@/app/components";
-import { theme } from "@/utils/theme";
-
-const cardData = {
-  image: "https://i.imgur.com/Cij5vdL.png",
-  link: "https://mantine.dev/",
-  title: "Resident Evil Village review",
-  rating: "outstanding",
-  description:
-    "Resident Evil Village is a direct sequel to 2017’s Resident Evil 7, but takes a very different direction to its predecessor, namely the fact that this time round instead of fighting against various mutated zombies, you’re now dealing with more occult enemies like werewolves and vampires.",
-  author: {
-    name: "Bill Wormeater",
-    image:
-      "https://images.unsplash.com/photo-1593229874334-90d965f27c42?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80",
-  },
-};
+import { MemoryCard2, SideMenu } from "@/app/components";
+import { allMemories } from "@/api-config/API";
 
 const Memories = () => {
+  const { data } = useQuery({ queryKey: ["memories"], queryFn: allMemories });
+
   return (
     <main style={{ marginTop: "50px", marginBottom: "100px" }}>
       <Container size="xl">
@@ -40,72 +39,29 @@ const Memories = () => {
           </Grid.Col>
           <Grid.Col sm={8} md={9}>
             <Grid>
-              <Grid.Col sm={4}>
-                <MemoryCard
-                  author={cardData.author}
-                  description={cardData.description}
-                  image={cardData.image}
-                  link={cardData.link}
-                  rating={cardData.rating}
-                  title={cardData.title}
-                  // about={cardData.}
-                />
-              </Grid.Col>
-              <Grid.Col sm={4}>
-                <MemoryCard
-                  author={cardData.author}
-                  description={cardData.description}
-                  image={cardData.image}
-                  link={cardData.link}
-                  rating={cardData.rating}
-                  title={cardData.title}
-                  // about={cardData.}
-                />
-              </Grid.Col>
-              <Grid.Col sm={4}>
-                <MemoryCard
-                  author={cardData.author}
-                  description={cardData.description}
-                  image={cardData.image}
-                  link={cardData.link}
-                  rating={cardData.rating}
-                  title={cardData.title}
-                  // about={cardData.}
-                />
-              </Grid.Col>
-              <Grid.Col sm={4}>
-                <MemoryCard
-                  author={cardData.author}
-                  description={cardData.description}
-                  image={cardData.image}
-                  link={cardData.link}
-                  rating={cardData.rating}
-                  title={cardData.title}
-                  // about={cardData.}
-                />
-              </Grid.Col>
-              <Grid.Col sm={4}>
-                <MemoryCard
-                  author={cardData.author}
-                  description={cardData.description}
-                  image={cardData.image}
-                  link={cardData.link}
-                  rating={cardData.rating}
-                  title={cardData.title}
-                  // about={cardData.}
-                />
-              </Grid.Col>
-              <Grid.Col sm={4}>
-                <MemoryCard
-                  author={cardData.author}
-                  description={cardData.description}
-                  image={cardData.image}
-                  link={cardData.link}
-                  rating={cardData.rating}
-                  title={cardData.title}
-                  // about={cardData.}
-                />
-              </Grid.Col>
+              {data?.length ? (
+                data.map((memory) => (
+                  <Grid.Col sm={4} key={memory.id}>
+                    <MemoryCard2
+                      author={memory.user}
+                      comments={memory.comments?.length}
+                      image={memory.images[0]}
+                      slug={memory.slug}
+                      title={memory.title}
+                      views={memory.readTime || 0}
+                    />
+                  </Grid.Col>
+                ))
+              ) : (
+                <Stack
+                  align="center"
+                  justify="center"
+                  sx={{ width: "100%", height: "100px" }}
+                >
+                  <Loader color="pink" size="xl" />
+                </Stack>
+              )}
+
               <Grid.Col>
                 <Stack align="center" mt={25}>
                   <Pagination total={10} color="pink" withEdges size="md" />
@@ -120,3 +76,11 @@ const Memories = () => {
 };
 
 export default Memories;
+
+export const getStaticProps: GetStaticProps = async () => {
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery(["memories"], allMemories);
+
+  return { props: { dehydratedState: dehydrate(queryClient) } };
+};

@@ -79,6 +79,12 @@ class MemoriesControllers {
   async getAllMemories(req: Request, res: Response) {
     const memories = await prisma.memory.findMany({
       where: { NOT: { memoryType: "Secret" } },
+      include: {
+        place: { select: { country: true } },
+        user: {
+          select: { id: true, name: true, avatar: true, username: true },
+        },
+      },
     });
 
     if (!memories.length) {

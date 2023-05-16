@@ -51,6 +51,7 @@ const MemoryCreate = () => {
       zip: "",
       category: "",
       tags: "",
+      memoryType: "",
     },
 
     validate: {
@@ -161,6 +162,8 @@ const MemoryCreate = () => {
         },
       };
 
+      console.log("🚀🚀🚀 send data", submitObj);
+
       const { data: responseData } = await API.post(
         "/api/v1/memories/create",
         submitObj,
@@ -237,7 +240,20 @@ const MemoryCreate = () => {
             />
 
             <Grid>
-              <Grid.Col xs={6}>
+              <Grid.Col xs={3}>
+                <NativeSelect
+                  description="Select from menu"
+                  label="Memory Type"
+                  placeholder="Select Type"
+                  value={form.values.memoryType}
+                  onChange={(event) =>
+                    form.setFieldValue("memoryType", event.currentTarget.value)
+                  }
+                  data={["Select One", "Public", "Private", "Secret"]}
+                  radius="md"
+                />
+              </Grid.Col>
+              <Grid.Col xs={4}>
                 <NativeSelect
                   description="Select from menu"
                   label="Category"
@@ -246,11 +262,25 @@ const MemoryCreate = () => {
                   onChange={(event) =>
                     form.setFieldValue("category", event.currentTarget.value)
                   }
-                  data={["Select One", "React", "Vue", "Angular", "Svelte"]}
+                  data={[
+                    "Select One",
+                    "Sea Beach",
+                    "Hill Truck",
+                    "City",
+                    "Dissert",
+                    "Ocean",
+                    "Heritage",
+                    "Mosque",
+                    "Jungle",
+                    "River",
+                    "Fort",
+                    "House",
+                    "Other",
+                  ]}
                   radius="md"
                 />
               </Grid.Col>
-              <Grid.Col xs={6}>
+              <Grid.Col xs={5}>
                 <TextInput
                   required
                   label="Tags"
@@ -303,7 +333,7 @@ const MemoryCreate = () => {
                   onChange={(event) =>
                     form.setFieldValue("city", event.currentTarget.value)
                   }
-                  error={form.errors.city && "Invalid slug"}
+                  error={form.errors.city}
                   radius="md"
                 />
               </Grid.Col>
@@ -315,7 +345,7 @@ const MemoryCreate = () => {
                   onChange={(event) =>
                     form.setFieldValue("state", event.currentTarget.value)
                   }
-                  error={form.errors.state && "Invalid slug"}
+                  error={form.errors.state}
                   radius="md"
                 />
               </Grid.Col>
@@ -327,7 +357,7 @@ const MemoryCreate = () => {
                   onChange={(event) =>
                     form.setFieldValue("country", event.currentTarget.value)
                   }
-                  error={form.errors.country && "Invalid slug"}
+                  error={form.errors.country}
                   radius="md"
                 />
               </Grid.Col>

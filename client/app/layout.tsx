@@ -1,3 +1,6 @@
+"use client"; // FIXME: remove in future
+import { ReactQueryDevtools } from "react-query/devtools";
+
 import { Footer, Navbar } from "@/app/components";
 import "./globals.css";
 import { Providers } from "@/app/components";
@@ -18,6 +21,8 @@ export default function RootLayout({
         <body>
           <Navbar />
           {children}
+          {/* FIXME: remove in production */}
+          <ReactQueryDevtools initialIsOpen={false} />
           <Footer />
         </body>
       </html>

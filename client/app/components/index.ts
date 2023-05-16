@@ -12,6 +12,7 @@ import Landing from "./Home/Landing";
 import FileUpload from "./Memory/FileUpload";
 import UploadedImage from "./Memory/UploadedImage";
 import MemoryCard from "./Memory/MemoryCard";
+import MemoryCard2 from "./Memory/MemoryCard2";
 import SideMenu from "./Memory/SideMenu";
 
 import { FacebookIcon } from "./button/btton-icons";
@@ -46,4 +47,5 @@ export {
   MemoryCard,
   SideMenu,
   UserButton,
+  MemoryCard2,
 };
