@@ -1,8 +1,11 @@
+import { MemoryType } from "@/utils/options";
 import axios, { AxiosInstance } from "axios";
 
 const api_url = process.env.NEXT_PUBLIC_BACKEND_ORIGIN as string;
 
-// TODO: login user types
+export interface GeneralError {
+  response: { data: { message: string } };
+}
 
 export interface RegisterUserTypes {
   id: string;
@@ -61,8 +64,38 @@ export interface AllMemoriesTypes {
   readTime: number;
 }
 
-interface MemoryBySlugTypes {
+interface MemoryDetails {
   id: string;
+  slug: string;
+  title: string;
+  body: string;
+  images: string[];
+  likes?: string[];
+  saved?: string[];
+  tags: string[];
+  category: string;
+  memoryType: MemoryType;
+  readTime: number | null;
+  userId: string;
+  user: {
+    id: string;
+    name: string;
+    username: string;
+    userType: string;
+    email: string;
+    avatar?: string;
+  };
+  placeId?: string;
+  place?: {
+    id: string;
+    street?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+    zip?: string;
+  };
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // TODO: api instance
@@ -88,9 +121,20 @@ export const allMemories = async (token?: string) => {
 };
 
 // TODO: get memory by slug
-export const memoryBySlug = async (slug: string) => {
-  const { data } = await API.get<MemoryBySlugTypes>(
-    `/api/v1/memories/get-memory-by-id/${slug}`
-  );
-  return data;
+export const memoryDetails = async (
+  slug: string,
+  token?: string | null | undefined
+) => {
+  if (token) {
+    const { data } = await API.get<MemoryDetails>(
+      `/api/v1/memories/memory-details/${slug}`,
+      { headers: { authorization: `Bearer ${token}` } }
+    );
+    return data;
+  } else {
+    const { data } = await API.get<MemoryDetails>(
+      `/api/v1/memories/memory-details/${slug}`
+    );
+    return data;
+  }
 };

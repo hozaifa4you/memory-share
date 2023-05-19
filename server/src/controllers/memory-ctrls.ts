@@ -149,7 +149,7 @@ class MemoriesControllers {
   }
 
   // TODO: get memory by slug
-  async getMemoryBySlug(req: Request, res: Response) {
+  async memoryDetails(req: Request, res: Response) {
     console.log("query 😍😍😍 ", req.params);
 
     const slug = req.params.slug as string;
@@ -159,7 +159,22 @@ class MemoriesControllers {
       throw new Error("🔥 slug not found! ⚠️");
     }
 
-    const memory = await prisma.memory.findFirst({ where: { slug } });
+    const memory = await prisma.memory.findFirst({
+      where: { slug },
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            userType: true,
+            email: true,
+            avatar: true,
+          },
+        },
+        place: true,
+      },
+    });
 
     if (memory?.memoryType === "Private") {
       if (req.user) {

@@ -30,8 +30,8 @@ memoryRoutes.route("/upload").post(
 );
 
 memoryRoutes
-  .route("/get-memory-by-slug/:slug")
-  .get(asyncHandler(memoryCtrls.getMemoryBySlug));
+  .route("/memory-details/:slug")
+  .get(asyncHandler(readPermission), asyncHandler(memoryCtrls.memoryDetails));
 
 memoryRoutes
   .route("/delete-photo")

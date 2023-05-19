@@ -14,6 +14,11 @@ import UploadedImage from "./Memory/UploadedImage";
 import MemoryCard from "./Memory/MemoryCard";
 import MemoryCard2 from "./Memory/MemoryCard2";
 import SideMenu from "./Memory/SideMenu";
+import MemoryDetails from "./Memory/MemoryDetails";
+import ProfileCard from "./Memory/ProfileCard";
+import MemoryDetailsTable from "./Memory/MemoryDetailsTable";
+import TableRow from "./Memory/TableRow";
+import MemoryPhotos from "./Memory/Photos";
 
 import { FacebookIcon } from "./button/btton-icons";
 import { GoogleIcon } from "./button/btton-icons";
@@ -48,4 +53,9 @@ export {
   SideMenu,
   UserButton,
   MemoryCard2,
+  MemoryDetails,
+  ProfileCard,
+  MemoryDetailsTable,
+  TableRow,
+  MemoryPhotos,
 };

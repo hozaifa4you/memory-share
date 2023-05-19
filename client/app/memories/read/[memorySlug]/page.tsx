@@ -1,4 +1,8 @@
+"use client";
 import React from "react";
+import Head from "next/head";
+
+import { MemoryDetails } from "@/app/components";
 
 interface PropTypes {
   params: { memorySlug: string };
@@ -6,21 +10,24 @@ interface PropTypes {
 }
 
 export async function generateMetadata({ params: { memorySlug } }: PropTypes) {
-  // console.log("😍😍😍 metadata", memorySlug);
+  const t = memorySlug.split("-").join(" ");
+  const title = t.charAt(0).toUpperCase() + t.slice(1);
 
   return {
-    title: memorySlug + "| Memory Share",
-    description: {
-      name: "description",
-      content: memorySlug.toString(),
-    },
+    title: title + " | Memory Share",
+    description: title,
   };
 }
 
 const MemoryRead = ({ params: { memorySlug } }: PropTypes) => {
-  console.log(memorySlug);
-
-  return <div>{memorySlug}</div>;
+  return (
+    <div>
+      <Head>
+        <title>{memorySlug}</title>
+      </Head>
+      {memorySlug && <MemoryDetails slug={memorySlug} />}
+    </div>
+  );
 };
 
 export default MemoryRead;
