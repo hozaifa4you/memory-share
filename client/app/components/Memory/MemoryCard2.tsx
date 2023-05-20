@@ -9,6 +9,7 @@ import {
   getStylesRef,
   rem,
 } from "@mantine/core";
+import Link from "next/link";
 
 const backend_origin = process.env.NEXT_PUBLIC_BACKEND_ORIGIN as string;
 
@@ -92,7 +93,7 @@ export default function ImageCard({
       shadow="lg"
       className={classes.card}
       radius="md"
-      component="a"
+      component={Link}
       href={`/memories/read/${slug}`}
     >
       <div
